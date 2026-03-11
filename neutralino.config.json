@@ -1,0 +1,34 @@
+{
+    "applicationId": "com.chess.board",
+    "version": "1.0.0",
+    "defaultMode": "window",
+    "port": 0,
+    "url": "http://localhost:3000",
+    "modes": {
+        "window": {
+            "title": "Chess Board",
+            "width": 700,
+            "height": 700,
+            "minWidth": 400,
+            "minHeight": 400,
+            "center": true
+        }
+    },
+    "logging": {
+        "enabled": false
+    },
+    "nativeAllowList": [
+        "app.*",
+        "window.*",
+        "os.getEnv",
+        "os.showMessageBox"
+    ],
+    "cli": {
+        "binaryName": "chess-board",
+        "resourcesPath": "/resources/",
+        "extensionsPath": "/extensions/",
+        "clientLibrary": "/resources/neutralino.js",
+        "binaryVersion": "5.5.0",
+        "clientVersion": "3.12.0"
+    }
+}

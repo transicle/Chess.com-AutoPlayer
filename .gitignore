@@ -1,0 +1,16 @@
+node_modules
+out
+dist
+*.tgz
+coverage
+*.lcov
+logs
+_.log
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+.eslintcache
+.cache
+*.tsbuildinfo
+.DS_Store
+session.json
+.tmp
+neutralinojs.log

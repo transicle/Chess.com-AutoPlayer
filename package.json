@@ -1,0 +1,21 @@
+{
+  "name": "chess-com-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.7.0",
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "idx": "bun run api/index.ts",
+    "server": "bun run app/server.ts",
+    "app": "bun run app/launch.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}

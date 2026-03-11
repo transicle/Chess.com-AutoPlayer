@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Chess Board</title>
+    <style>
+        body {
+            margin: 0;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        img {
+            max-width: 90vw;
+            max-height: 90vh;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="status">Connecting to Chess.com...</p>
+    <img id="board" style="display:none" />
+    <script>
+        const ws = new WebSocket(`ws://${location.host}/ws`);
+        ws.onmessage = (e) => {
+            const img = document.getElementById("board");
+            const status = document.getElementById("status");
+            img.src = e.data;
+            img.style.display = "block";
+            status.style.display = "none";
+        };
+        ws.onclose = () => {
+            document.getElementById("status").textContent = "Disconnected.";
+            document.getElementById("status").style.display = "block";
+        };
+    </script>
+</body>
+
+</html>
