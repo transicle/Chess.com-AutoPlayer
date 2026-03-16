@@ -11,6 +11,11 @@
 
 ## Preview
 
-https://github.com/user-attachments/assets/9354f3bf-d76f-4366-b1e8-7310557fadc1
+<details>
+  <summary>
+    Open Maia 3 preview. <b>*</b><i>Includes audio</i>. (Muted by default)
+  </summary><br>
+  <video src="https://github.com/user-attachments/assets/9354f3bf-d76f-4366-b1e8-7310557fadc1"/>
+</details>
 
 > Maia 3 is playing at around a **1,600** ELO skill-level.
