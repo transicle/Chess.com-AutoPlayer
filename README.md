@@ -6,4 +6,6 @@
 > [!TIP]
 > **[1]** Store your account information in the **`.env`** file. **[2]** You should also keep in mind that this is NOT undetected as of right now, and the Chess.com provided will get banned _if_ used for too long in one session.
 
+> _Ensure the account stored is registered to [Chess.com](https://chess.com/) first._
+
 ## Preview
