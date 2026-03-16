@@ -1,6 +1,7 @@
 <div align="center">
   <h1>Chess.com AutoPlayer</h1>
   <p>Automate Chess.com games with a very human-playing neural network that adapts to their opponents ELO. Designed for complete automation, account management, and to ruin children's days.</p>
+  <p>Uses the <a href="https://maiachess.com">Maia 3</a> Chess engine for gameplay. Scales between <b>600</b>-<b>2,400</b> (IM) ELO.</p>
 </div>
 
 > [!TIP]
