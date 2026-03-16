@@ -19,3 +19,33 @@
 </details>
 
 > Maia 3 is playing at around a **1,600** ELO skill-level.
+
+---
+
+## Using the Auto Player
+
+- To use the autoplayer, ensure you have the [Bun runtime](https://bun.com) installed on your machine.
+
+- Then, install any dependencies using the command:
+```
+bun install
+```
+
+- **_Finally_**, start the server and launch the app using:
+```
+bun run app
+```
+
+---
+
+## Self-diagnosing and Resolving App Problems
+
+### _[1]_ Dealing with Account Bans
+
+If the Chess.com account provided gets suspended, you'll be able to tell because games will not automatically start. If you're unsure, open the **`./app/server.ts`** file, find where it says: **`{ debug: false }`** and set the value to **`true`**.
+
+Debug mode makes the previously headless browser visible, where you'll then be able to see if the account is suspended or not.
+
+### _[2]_ Dealing with Port Issues
+
+If you are constantly opening and closing the app, it's very likely you'll run into issues with the server's port. If it brings up a message, such as "_**Is the port already in use?**_", you can change the port in the **`.env`** file to something it hasn't been set to previously. (Or kill the process using up that port!)
