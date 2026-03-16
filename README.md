@@ -1,3 +1,9 @@
-# chess-com-api
+<div align="center">
+  <h1>Chess.com AutoPlayer</h1>
+  <p>Automate Chess.com games with a very human-playing neural network that adapts to their opponents ELO. Designed for complete automation, account management, and to ruin children's days.</p>
+</div>
 
-> **TODO:** *[1]* Add support for moving pieces. *[2]* Add the Maia neural network at a default of 1,000 ELO. *[3]* Add a feature for adjustable ELO points. *[4]* Have the Maia neural network automatically start new matches and/or accept rematches and decline draws.
+> [!TIP]
+> **[1]** Store your account information in the **`.env`** file. **[2]** You should also keep in mind that this is NOT undetected as of right now, and the Chess.com provided will get banned _if_ used for too long in one session.
+
+## Preview
