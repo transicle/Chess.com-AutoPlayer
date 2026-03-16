@@ -10,3 +10,7 @@
 > _Ensure the account stored is registered to [Chess.com](https://chess.com/) first._
 
 ## Preview
+
+https://github.com/user-attachments/assets/9354f3bf-d76f-4366-b1e8-7310557fadc1
+
+> Maia 3 is playing at around a **1,600** ELO skill-level.
