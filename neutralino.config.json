@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "defaultMode": "window",
     "port": 0,
-    "url": "http://localhost:3000",
+    "url": "http://localhost:1200",
     "modes": {
         "window": {
             "title": "Chess Board",

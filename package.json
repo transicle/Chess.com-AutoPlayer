@@ -5,7 +5,10 @@
   "private": true,
   "devDependencies": {
     "@neutralinojs/neu": "^11.7.0",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.57.0"
   },
   "scripts": {
     "idx": "bun run api/index.ts",
@@ -16,6 +19,8 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "chess.js": "^1.1.0",
+    "dotenv": "^17.3.1",
     "playwright": "^1.58.2"
   }
 }

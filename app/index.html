@@ -1,46 +1,277 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Chess Board</title>
     <style>
-        body {
-            margin: 0;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            font-family: monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        img {
-            max-width: 90vw;
-            max-height: 90vh;
-            image-rendering: pixelated;
-        }
+      body {
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0 5px;
+        box-sizing: border-box;
+        background: #1e1e1e;
+        color: #d4d4d4;
+        font-family: monospace;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+        min-height: 100vh;
+      }
+      img {
+        max-width: 90vw;
+        image-rendering: pixelated;
+      }
+      #board {
+        max-height: 90vh;
+        display: block;
+        margin: 0;
+      }
+      #player-top,
+      #player-bottom {
+        display: none;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        width: 100%;
+        height: auto;
+      }
+      #player-top img,
+      #player-bottom img {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      #player-top {
+        padding-bottom: 8px;
+      }
+      #player-bottom {
+        padding-top: 8px;
+      }
+      #stats {
+        position: fixed;
+        top: 4px;
+        right: 4px;
+        font-size: 11px;
+        color: #888;
+        z-index: 100;
+        text-align: right;
+      }
     </style>
-</head>
-
-<body>
+  </head>
+  <body>
     <p id="status">Connecting to Chess.com...</p>
-    <img id="board" style="display:none" />
+     <div id="stats">
+      <div id="maia-elo"></div>
+      <div id="fps-counter">-- FPS</div>
+    </div>
+    <div id="frame">
+      <div id="player-top"></div>
+      <img id="board" style="display: none" />
+      <div id="player-bottom"></div>
+    </div>
     <script>
-        const ws = new WebSocket(`ws://${location.host}/ws`);
-        ws.onmessage = (e) => {
-            const img = document.getElementById("board");
-            const status = document.getElementById("status");
-            img.src = e.data;
-            img.style.display = "block";
-            status.style.display = "none";
+      const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws`);
+      ws.binaryType = "arraybuffer";
+      const topContainer = document.getElementById("player-top");
+      const bottomContainer = document.getElementById("player-bottom");
+      const boardImg = document.getElementById("board");
+      const fpsEl = document.getElementById("fps-counter");
+      let frameCount = 0;
+      let lastFpsTime = performance.now();
+      function updateFps() {
+        const now = performance.now();
+        const dt = now - lastFpsTime;
+        if (dt >= 1000) {
+          const fps = (frameCount / (dt / 1000)).toFixed(1);
+          if (fpsEl) fpsEl.textContent = fps + " FPS";
+          frameCount = 0;
+          lastFpsTime = now;
+        }
+      }
+      setInterval(updateFps, 500);
+      let prevObjUrl = null;
+      function renderBinaryFrame(arrayBuf) {
+        const blob = new Blob([arrayBuf], { type: "image/jpeg" });
+        const url = URL.createObjectURL(blob);
+        const tmp = new Image();
+        tmp.onload = () => {
+          boardImg.src = url;
+          boardImg.style.display = "block";
+          if (prevObjUrl) {
+            try { URL.revokeObjectURL(prevObjUrl); } catch { }
+          }
+          prevObjUrl = url;
+          frameCount++;
+          const statusEl = document.getElementById("status");
+          if (statusEl) statusEl.style.display = "none";
         };
-        ws.onclose = () => {
-            document.getElementById("status").textContent = "Disconnected.";
-            document.getElementById("status").style.display = "block";
+        tmp.onerror = () => {
+          URL.revokeObjectURL(url);
         };
+        tmp.src = url;
+      }
+      function setImageFromDataUrl(imgEl, dataUrl) {
+        try {
+          const prev = imgEl.dataset && imgEl.dataset.objUrl;
+          const parts = dataUrl.split(",");
+          const mimeMatch = parts[0].match(/data:(.*);base64/);
+          const mime = mimeMatch ? mimeMatch[1] : "image/png";
+          const bstr = atob(parts[1] || "");
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) u8arr[n] = bstr.charCodeAt(n);
+          const blob = new Blob([u8arr], { type: mime });
+          const objUrl = URL.createObjectURL(blob);
+          const tmp = new Image();
+          tmp.onload = () => {
+            imgEl.src = objUrl;
+            imgEl.style.display = "block";
+            if (!imgEl.dataset) imgEl.dataset = {};
+            if (prev) {
+              try { URL.revokeObjectURL(prev); } catch { }
+            }
+            imgEl.dataset.objUrl = objUrl;
+          };
+          tmp.onerror = () => {
+            imgEl.src = dataUrl;
+            imgEl.style.display = "block";
+            if (prev) {
+              try { URL.revokeObjectURL(prev); } catch { }
+            }
+          };
+          tmp.src = objUrl;
+        } catch (err) {
+          try {
+            imgEl.src = dataUrl;
+            imgEl.style.display = "block";
+          } catch { }
+        }
+      }
+      function ensurePanelImgs() {
+        if (!document.getElementById("top-panel-img")) {
+          const img = document.createElement("img");
+          img.id = "top-panel-img";
+          img.style.width = "100%";
+          img.style.height = "auto";
+          img.style.borderRadius = "6px";
+          topContainer.appendChild(img);
+        }
+        if (!document.getElementById("bottom-panel-img")) {
+          const img = document.createElement("img");
+          img.id = "bottom-panel-img";
+          img.style.width = "100%";
+          img.style.height = "auto";
+          img.style.borderRadius = "6px";
+          bottomContainer.appendChild(img);
+        }
+      }
+      ensurePanelImgs();
+      ws.onmessage = (e) => {
+        if (e.data instanceof ArrayBuffer) {
+          renderBinaryFrame(e.data);
+          return;
+        }
+        let parsed = null;
+        try {
+          parsed = JSON.parse(e.data);
+        } catch (err) {
+          if (typeof e.data === "string" && e.data.startsWith("data:image")) {
+            setImageFromDataUrl(boardImg, e.data);
+            boardImg.style.display = "block";
+            frameCount++;
+            const statusEl = document.getElementById("status");
+            if (statusEl) statusEl.style.display = "none";
+            return;
+          }
+          return;
+        }
+        if (parsed && typeof parsed === "object" && parsed.type) {
+          if (parsed.type === "manual-move-result") {
+            const statusEl = document.getElementById("status");
+            if (statusEl)
+              statusEl.textContent = parsed.ok ? "Move applied" : "Move failed";
+            statusEl.style.display = "block";
+            setTimeout(() => {
+              if (statusEl) statusEl.style.display = "none";
+            }, 1500);
+            return;
+          }
+           if (parsed.type === "meta") {
+            if (parsed.players) {
+              updatePlayerPanels(parsed.players);
+            }
+            if (parsed.maiaElo) {
+              const eloEl = document.getElementById("maia-elo");
+              if (eloEl) eloEl.textContent = "Maia ELO: " + parsed.maiaElo;
+            }
+            return;
+          }
+        }
+        if (parsed && parsed.board) {
+          setImageFromDataUrl(boardImg, parsed.board);
+          boardImg.style.display = "block";
+          frameCount++;
+          const statusEl = document.getElementById("status");
+          if (statusEl) statusEl.style.display = "none";
+        }
+        if (parsed && parsed.players) {
+          updatePlayerPanels(parsed.players);
+        }
+      };
+      function updatePlayerPanels(players) {
+        const top = players.top;
+        const bottom = players.bottom;
+        const topImg = document.getElementById("top-panel-img");
+        const bottomImg = document.getElementById("bottom-panel-img");
+        if (top && top.panel) {
+          setImageFromDataUrl(topImg, top.panel);
+          topImg.style.display = "block";
+          const fallback = topContainer.querySelector(".fallback");
+          if (fallback) fallback.style.display = "none";
+          topContainer.style.display = "block";
+        } else if (top) {
+          if (topImg) topImg.style.display = "none";
+          let fallback = topContainer.querySelector(".fallback");
+          if (!fallback) {
+            fallback = document.createElement("span");
+            fallback.className = "fallback";
+            topContainer.appendChild(fallback);
+          }
+          fallback.style.display = "inline-block";
+          fallback.innerHTML = `<img src="${top.avatar || ""}" style="width:40px;height:40px;border-radius:50%;vertical-align:middle;margin-right:8px" /><span style="font-weight:bold">${top.username || ""}</span><span style="margin-left:8px">${top.rating ? `Rating: ${top.rating}` : ""}</span><span style="margin-left:8px">⏰ ${top.clock || ""}</span>`;
+          topContainer.style.display = "block";
+        }
+        if (bottom && bottom.panel) {
+          setImageFromDataUrl(bottomImg, bottom.panel);
+          bottomImg.style.display = "block";
+          const fallback = bottomContainer.querySelector(".fallback");
+          if (fallback) fallback.style.display = "none";
+          bottomContainer.style.display = "block";
+        } else if (bottom) {
+          if (bottomImg) bottomImg.style.display = "none";
+          let fallback = bottomContainer.querySelector(".fallback");
+          if (!fallback) {
+            fallback = document.createElement("span");
+            fallback.className = "fallback";
+            bottomContainer.appendChild(fallback);
+          }
+          fallback.style.display = "inline-block";
+          fallback.innerHTML = `<img src="${bottom.avatar || ""}" style="width:40px;height:40px;border-radius:50%;vertical-align:middle;margin-right:8px" /><span style="font-weight:bold">${bottom.username || ""}</span><span style="margin-left:8px">${bottom.rating ? `Rating: ${bottom.rating}` : ""}</span><span style="margin-left:8px">⏰ ${bottom.clock || ""}</span>`;
+          bottomContainer.style.display = "block";
+        }
+      }
+      ws.onclose = () => {
+        const statusEl = document.getElementById("status");
+        if (statusEl) {
+          statusEl.textContent = "Disconnected.";
+          statusEl.style.display = "block";
+        }
+      };
     </script>
-</body>
-
+  </body>
 </html>

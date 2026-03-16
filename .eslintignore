@@ -1,0 +1,8 @@
+resources/
+resources/**
+**/neutralino.js
+api/chess/board.ts
+app/launch.ts
+app/server.ts
+*.json
+node_modules/
